@@ -140,6 +140,16 @@ export default function QuestionnaireList() {
                         {questionnaire.is_active ? 'Deactivate' : 'Activate'}
                       </button>
                       <button
+                        onClick={() => {
+                          const url = `${window.location.origin}/questionnaire/${questionnaire.id}`;
+                          navigator.clipboard.writeText(url);
+                          alert('Public URL copied to clipboard!');
+                        }}
+                        style={{ background: '#007bff', color: 'white', fontSize: '12px' }}
+                      >
+                        Copy Public Link
+                      </button>
+                      <button
                         onClick={() => navigate(`/responses/${questionnaire.id}`)}
                         style={{ background: '#17a2b8', color: 'white', fontSize: '12px' }}
                       >
@@ -155,6 +165,47 @@ export default function QuestionnaireList() {
                   </div>
                   
                   <div style={{ marginTop: '20px', paddingTop: '20px', borderTop: '1px solid #eee' }}>
+                    <h4 style={{ marginBottom: '10px', color: '#333' }}>Public URL:</h4>
+                    <div style={{ 
+                      backgroundColor: '#f8f9fa', 
+                      padding: '10px', 
+                      borderRadius: '5px', 
+                      border: '1px solid #dee2e6',
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '10px'
+                    }}>
+                      <code style={{ 
+                        flex: 1, 
+                        fontSize: '12px', 
+                        wordBreak: 'break-all',
+                        backgroundColor: 'transparent'
+                      }}>
+                        {window.location.origin}/questionnaire/{questionnaire.id}
+                      </code>
+                      <button
+                        onClick={() => {
+                          const url = `${window.location.origin}/questionnaire/${questionnaire.id}`;
+                          navigator.clipboard.writeText(url);
+                          alert('Public URL copied to clipboard!');
+                        }}
+                        style={{ 
+                          background: '#007bff', 
+                          color: 'white', 
+                          fontSize: '10px',
+                          padding: '4px 8px',
+                          whiteSpace: 'nowrap'
+                        }}
+                      >
+                        Copy
+                      </button>
+                    </div>
+                    <p style={{ fontSize: '12px', color: '#666', marginTop: '5px' }}>
+                      Share this URL with your customers to let them fill out the questionnaire
+                    </p>
+                  </div>
+                  
+                  <div style={{ marginTop: '15px', paddingTop: '15px', borderTop: '1px solid #eee' }}>
                     <h4 style={{ marginBottom: '10px', color: '#333' }}>Questions Preview:</h4>
                     <ul style={{ marginLeft: '20px' }}>
                       {questionnaire.questions.slice(0, 3).map((question) => (

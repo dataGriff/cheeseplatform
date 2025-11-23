@@ -48,12 +48,20 @@ export default function QuestionnaireCreate() {
     setError('');
 
     try {
-      await questionnaireService.create({
+      const result = await questionnaireService.create({
         title: title.trim(),
         description: description.trim(),
         questions,
         isActive: true,
       });
+      
+      // Show success message with public URL
+      const publicUrl = `${window.location.origin}/questionnaire/${result.questionnaire.id}`;
+      alert(`Questionnaire created successfully!\n\nPublic URL: ${publicUrl}\n\nThis URL has been copied to your clipboard.`);
+      
+      // Copy to clipboard
+      navigator.clipboard.writeText(publicUrl);
+      
       navigate('/questionnaires');
     } catch (err: any) {
       setError(err.response?.data?.error || 'Failed to create questionnaire');

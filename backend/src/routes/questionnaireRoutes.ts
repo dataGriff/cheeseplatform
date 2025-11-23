@@ -1,16 +1,21 @@
 import express from 'express';
 import { authenticateToken } from '../middleware/auth';
-import { apiLimiter } from '../middleware/rateLimiter';
+import { apiLimiter, publicLimiter } from '../middleware/rateLimiter';
 import {
   createQuestionnaire,
   getQuestionnaires,
   getQuestionnaire,
   updateQuestionnaire,
-  deleteQuestionnaire
+  deleteQuestionnaire,
+  getPublicQuestionnaire
 } from '../controllers/questionnaireController';
 
 const router = express.Router();
 
+// Public endpoint for accessing questionnaires
+router.get('/public/:id', publicLimiter, getPublicQuestionnaire);
+
+// Protected endpoints
 router.use(apiLimiter);
 router.use(authenticateToken);
 

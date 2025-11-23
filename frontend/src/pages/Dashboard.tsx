@@ -84,8 +84,11 @@ export default function Dashboard() {
           <div className="quick-actions">
             <h3>Quick Actions</h3>
             <button onClick={() => navigate('/cheeses/new')}>Add New Cheese</button>
-            <button onClick={() => navigate('/questionnaires/new')}>Create Questionnaire</button>
+            <button onClick={() => navigate('/questionnaires/new')}>Create Public Questionnaire</button>
             <button onClick={() => navigate('/webhooks')}>Setup Integrations</button>
+            <p style={{ fontSize: '14px', color: '#666', marginTop: '10px' }}>
+              Create questionnaires that customers can access via a public web link
+            </p>
           </div>
 
           <div className="recent-activity">

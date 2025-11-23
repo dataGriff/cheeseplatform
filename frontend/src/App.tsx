@@ -9,6 +9,7 @@ import QuestionnaireList from './pages/QuestionnaireList';
 import QuestionnaireCreate from './pages/QuestionnaireCreate';
 import ResponsesList from './pages/ResponsesList';
 import WebhooksList from './pages/WebhooksList';
+import PublicQuestionnaire from './pages/PublicQuestionnaire';
 import './styles/App.css';
 
 function PrivateRoute({ children }: { children: React.ReactNode }) {
@@ -79,6 +80,7 @@ function App() {
               </PrivateRoute>
             }
           />
+          <Route path="/questionnaire/:id" element={<PublicQuestionnaire />} />
           <Route path="/" element={<Navigate to="/dashboard" />} />
         </Routes>
       </BrowserRouter>
