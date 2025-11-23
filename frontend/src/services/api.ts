@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { AuthResponse } from '../types';
+import { AuthResponse, CheeseInput } from '../types';
 
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3001/api';
 
@@ -66,12 +66,12 @@ export const cheeseService = {
     return response.data.cheese;
   },
 
-  create: async (cheese: any) => {
+  create: async (cheese: CheeseInput) => {
     const response = await api.post('/cheeses', cheese);
     return response.data;
   },
 
-  update: async (id: number, cheese: any) => {
+  update: async (id: number, cheese: Partial<CheeseInput>) => {
     const response = await api.put(`/cheeses/${id}`, cheese);
     return response.data;
   },

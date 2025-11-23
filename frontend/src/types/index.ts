@@ -12,6 +12,11 @@ export interface AuthResponse {
   company: Company;
 }
 
+export interface FlavorProfile {
+  flavors?: string[];
+  notes?: string[];
+}
+
 export interface Cheese {
   id: number;
   company_id: number;
@@ -19,12 +24,23 @@ export interface Cheese {
   description: string;
   type: string;
   texture: string;
-  flavor_profile: any;
+  flavor_profile: FlavorProfile | string[];
   milk_type: string;
   intensity: number;
   image_url: string;
   created_at?: string;
   updated_at?: string;
+}
+
+export interface CheeseInput {
+  name: string;
+  description?: string;
+  type?: string;
+  texture?: string;
+  flavorProfile?: FlavorProfile | string[];
+  milkType?: string;
+  intensity?: number;
+  imageUrl?: string;
 }
 
 export interface Question {

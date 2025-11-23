@@ -124,11 +124,17 @@ async function triggerWebhooks(companyId: number, eventType: string, data: any):
       [companyId, eventType]
     );
 
-    // In a production environment, you would queue these webhook calls
-    // For now, we'll just log them
+    // TODO: Production Implementation
+    // In production, webhook calls should be queued using a message queue system like:
+    // - Bull (Redis-based queue)
+    // - AWS SQS
+    // - RabbitMQ
+    // This ensures reliability with retry logic, exponential backoff, and dead letter queues.
+    // For now, we log the webhook triggers.
     webhooksResult.rows.forEach((webhook: { url: string }) => {
-      console.log(`Webhook triggered: ${webhook.url} for event ${eventType}`);
-      // In production: queue webhook delivery with retry logic
+      console.log(`Webhook triggered: ${webhook.url} for event ${eventType}`, data);
+      // Production implementation would look like:
+      // await webhookQueue.add('deliver', { url: webhook.url, eventType, data });
     });
   } catch (error) {
     console.error('Error triggering webhooks:', error);
