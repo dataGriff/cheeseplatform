@@ -1,5 +1,11 @@
 import axios from 'axios';
-import { AuthResponse, CheeseInput } from '../types';
+import { 
+  AuthResponse, 
+  CheeseInput, 
+  QuestionnaireInput, 
+  ResponseSubmission, 
+  WebhookInput 
+} from '../types';
 
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3001/api';
 
@@ -94,12 +100,12 @@ export const questionnaireService = {
     return response.data.questionnaire;
   },
 
-  create: async (questionnaire: any) => {
+  create: async (questionnaire: QuestionnaireInput) => {
     const response = await api.post('/questionnaires', questionnaire);
     return response.data;
   },
 
-  update: async (id: number, questionnaire: any) => {
+  update: async (id: number, questionnaire: Partial<QuestionnaireInput>) => {
     const response = await api.put(`/questionnaires/${id}`, questionnaire);
     return response.data;
   },
@@ -112,7 +118,7 @@ export const questionnaireService = {
 
 // Response Service
 export const responseService = {
-  submit: async (questionnaireId: number, data: any) => {
+  submit: async (questionnaireId: number, data: ResponseSubmission) => {
     const response = await api.post(`/responses/${questionnaireId}/submit`, data);
     return response.data;
   },
@@ -130,12 +136,12 @@ export const webhookService = {
     return response.data.webhooks;
   },
 
-  create: async (webhook: any) => {
+  create: async (webhook: WebhookInput) => {
     const response = await api.post('/webhooks', webhook);
     return response.data;
   },
 
-  update: async (id: number, webhook: any) => {
+  update: async (id: number, webhook: Partial<WebhookInput>) => {
     const response = await api.put(`/webhooks/${id}`, webhook);
     return response.data;
   },

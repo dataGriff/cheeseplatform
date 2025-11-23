@@ -62,9 +62,21 @@ export interface Questionnaire {
   updated_at?: string;
 }
 
+export interface QuestionnaireInput {
+  title: string;
+  description?: string;
+  questions: Question[];
+  isActive?: boolean;
+}
+
 export interface QuestionnaireResponse {
   questionId: string;
   answer: string | string[] | number;
+}
+
+export interface ResponseSubmission {
+  customerEmail?: string;
+  responses: QuestionnaireResponse[];
 }
 
 export interface Recommendation {
@@ -87,4 +99,9 @@ export interface Webhook {
   event_type: string;
   is_active: boolean;
   created_at?: string;
+}
+
+export interface WebhookInput {
+  url: string;
+  eventType: string;
 }
