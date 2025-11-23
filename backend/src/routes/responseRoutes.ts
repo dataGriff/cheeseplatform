@@ -1,4 +1,5 @@
 import express from 'express';
+import { publicLimiter, apiLimiter } from '../middleware/rateLimiter';
 import {
   submitResponse,
   getResponses,
@@ -7,11 +8,11 @@ import {
 
 const router = express.Router();
 
-// Public endpoint for customers to submit responses
-router.post('/:questionnaireId/submit', submitResponse);
+// Public endpoint for customers to submit responses (with stricter rate limiting)
+router.post('/:questionnaireId/submit', publicLimiter, submitResponse);
 
-// Protected endpoints for viewing responses
-router.get('/:questionnaireId', getResponses);
-router.get('/response/:id', getResponse);
+// Protected endpoints for viewing responses (with standard API rate limiting)
+router.get('/:questionnaireId', apiLimiter, getResponses);
+router.get('/response/:id', apiLimiter, getResponse);
 
 export default router;

@@ -5,6 +5,21 @@
 http://localhost:3001/api
 ```
 
+## Rate Limiting
+
+The API implements rate limiting to prevent abuse:
+
+- **Authentication endpoints** (`/auth/*`): 5 requests per 15 minutes per IP
+- **Public endpoints** (`/responses/*/submit`): 20 requests per 5 minutes per IP
+- **Protected API endpoints**: 100 requests per 15 minutes per IP
+
+Rate limit information is returned in response headers:
+- `RateLimit-Limit`: Maximum number of requests allowed
+- `RateLimit-Remaining`: Number of requests remaining
+- `RateLimit-Reset`: Time when the rate limit resets
+
+When rate limit is exceeded, you'll receive a `429 Too Many Requests` response.
+
 ## Authentication
 
 All authenticated endpoints require a Bearer token in the Authorization header:

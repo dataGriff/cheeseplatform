@@ -234,11 +234,15 @@ npm run lint
 
 ## Security Features
 
-- JWT-based authentication
-- Password hashing with bcrypt
-- SQL injection protection via parameterized queries
-- CORS configuration
-- Environment-based secrets
+- **JWT-based authentication** - Secure token-based auth with configurable expiration
+- **Password hashing** - bcrypt with salt rounds for secure password storage
+- **SQL injection protection** - Parameterized queries via pg library
+- **CORS configuration** - Configurable cross-origin resource sharing
+- **Environment-based secrets** - Sensitive data stored in environment variables
+- **Rate limiting** - Protection against brute force and DDoS attacks
+  - Authentication endpoints: 5 requests per 15 minutes
+  - Public endpoints: 20 requests per 5 minutes
+  - API endpoints: 100 requests per 15 minutes
 
 ## Contributing
 
