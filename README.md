@@ -28,8 +28,48 @@ A comprehensive SaaS platform that allows cheese companies to easily build and h
 - Node.js 20+
 - PostgreSQL 16+ (or use Docker)
 - npm or yarn
+- [Task](https://taskfile.dev/) (optional but recommended)
 
-### Option 1: Using Docker (Recommended)
+### Option 1: Using Taskfile (Recommended)
+
+This project includes a comprehensive Taskfile that simplifies all development tasks.
+
+1. Clone the repository:
+```bash
+git clone https://github.com/dataGriff/cheeseplatform.git
+cd cheeseplatform
+```
+
+2. Start all services with one command:
+```bash
+task docker:up
+```
+
+3. Check that everything is working:
+```bash
+task health
+```
+
+4. Access the application:
+- Frontend: http://localhost:3000
+- Backend API: http://localhost:3001
+- Database: localhost:5432
+
+**Common Taskfile commands:**
+```bash
+task                # Show all available tasks
+task help          # Show detailed help
+task docker:up     # Start all services
+task dev:setup     # Set up development environment
+task dev:all       # Start backend and frontend locally
+task docker:logs   # View logs
+task status        # Check service status
+task docker:down   # Stop all services
+```
+
+See [TASKFILE.md](TASKFILE.md) for complete documentation.
+
+### Option 2: Using Docker (Manual)
 
 1. Clone the repository:
 ```bash
@@ -132,6 +172,9 @@ cheeseplatform/
 │   └── vite.config.ts
 ├── docs/
 │   └── API.md            # API documentation
+├── CONTRIBUTING.md       # Contribution guidelines
+├── TASKFILE.md          # Taskfile documentation
+├── Taskfile.yml         # Task runner configuration
 ├── docker-compose.yml
 ├── Dockerfile.backend
 ├── Dockerfile.frontend
@@ -210,7 +253,36 @@ The platform supports multiple subscription tiers:
 
 ## Development
 
-### Running Tests
+### Using Taskfile (Recommended)
+
+```bash
+# Set up development environment
+task dev:setup
+
+# Start both backend and frontend in development
+task dev:all
+
+# Or start individually
+task backend:dev    # or: task be
+task frontend:dev   # or: task fe
+
+# Run tests
+task test           # All tests
+task backend:test   # Backend only
+task frontend:test  # Frontend only
+
+# Run linting
+task lint           # All linting
+task backend:lint   # Backend only
+task frontend:lint  # Frontend only
+
+# Build for production
+task build:all
+```
+
+### Manual Development
+
+#### Running Tests
 ```bash
 # Backend tests
 cd backend
@@ -221,7 +293,7 @@ cd frontend
 npm test
 ```
 
-### Linting
+#### Linting
 ```bash
 # Backend
 cd backend
@@ -246,10 +318,20 @@ npm run lint
 
 ## Contributing
 
-1. Fork the repository
-2. Create a feature branch
-3. Make your changes
-4. Submit a pull request
+We welcome contributions! Please see [CONTRIBUTING.md](CONTRIBUTING.md) for detailed guidelines on:
+
+- Setting up the development environment with Taskfile
+- Code style and conventions
+- Testing requirements
+- Pull request process
+
+Quick start for contributors:
+```bash
+task dev:setup     # Set up development environment
+task dev:all       # Start development servers
+task test          # Run all tests
+task lint          # Check code style
+```
 
 ## License
 

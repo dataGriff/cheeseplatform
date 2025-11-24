@@ -1,0 +1,386 @@
+version: '3'
+
+vars:
+  BACKEND_DIR: ./backend
+  FRONTEND_DIR: ./frontend
+  DOCS_DIR: ./docs
+  COMPOSE_FILE: ./docker-compose.yml
+
+tasks:
+  # ====================
+  # Help and Information
+  # ====================
+  default:
+    desc: Show available tasks
+    cmds:
+      - task --list
+
+  help:
+    desc: Show detailed help for available tasks
+    cmds:
+      - echo "🧀 Cheese Platform Development Tasks"
+      - echo ""
+      - echo "Quick Start"
+      - echo "  task docker:up     Start all services with Docker"
+      - echo "  task dev:setup     Set up development environment"
+      - echo "  task dev:all       Run backend and frontend in dev mode"
+      - echo ""
+      - echo "Development"
+      - echo "  task backend:dev   Start backend in development mode"
+      - echo "  task frontend:dev  Start frontend in development mode"
+      - echo "  task install       Install all dependencies"
+      - echo ""
+      - echo "Docker"
+      - echo "  task docker:build  Build all Docker images"
+      - echo "  task docker:logs   View logs from all services"
+      - echo "  task docker:clean  Clean up Docker resources"
+      - echo ""
+      - echo "Database"
+      - echo "  task db:start      Start only PostgreSQL"
+      - echo "  task db:connect    Connect to PostgreSQL database"
+      - echo "  task db:logs       View database logs"
+      - echo ""
+      - echo "Production"
+      - echo "  task build:all     Build both backend and frontend"
+      - echo "  task prod:start    Start in production mode"
+      - echo ""
+
+  # ====================
+  # Installation & Setup
+  # ====================
+  install:
+    desc: Install all dependencies (backend + frontend)
+    deps: [backend:install, frontend:install]
+
+  backend:install:
+    desc: Install backend dependencies
+    dir: "{{.BACKEND_DIR}}"
+    cmds:
+      - npm install
+
+  frontend:install:
+    desc: Install frontend dependencies
+    dir: "{{.FRONTEND_DIR}}"
+    cmds:
+      - npm install
+
+  dev:setup:
+    desc: Set up development environment
+    cmds:
+      - task: install
+      - task: docker:db-only
+      - echo "✅ Development environment set up! Backend DB is running."
+      - echo "💡 Run 'task dev:all' to start both backend and frontend"
+
+  # ====================
+  # Development
+  # ====================
+  dev:all:
+    desc: Start both backend and frontend in development mode
+    deps: [backend:dev, frontend:dev]
+
+  backend:dev:
+    desc: Start backend in development mode
+    dir: "{{.BACKEND_DIR}}"
+    cmds:
+      - npm run dev
+
+  frontend:dev:
+    desc: Start frontend in development mode
+    dir: "{{.FRONTEND_DIR}}"
+    cmds:
+      - npm run dev
+
+  backend:build:
+    desc: Build backend TypeScript
+    dir: "{{.BACKEND_DIR}}"
+    cmds:
+      - npm run build
+
+  frontend:build:
+    desc: Build frontend for production
+    dir: "{{.FRONTEND_DIR}}"
+    cmds:
+      - npm run build
+
+  build:all:
+    desc: Build both backend and frontend
+    deps: [backend:build, frontend:build]
+
+  # ====================
+  # Testing & Linting
+  # ====================
+  test:
+    desc: Run all tests
+    deps: [backend:test, frontend:test]
+
+  backend:test:
+    desc: Run backend tests
+    dir: "{{.BACKEND_DIR}}"
+    cmds:
+      - npm test
+
+  frontend:test:
+    desc: Run frontend tests
+    dir: "{{.FRONTEND_DIR}}"
+    cmds:
+      - npm test
+
+  lint:
+    desc: Run linting for both backend and frontend
+    deps: [backend:lint, frontend:lint]
+
+  backend:lint:
+    desc: Run backend linting
+    dir: "{{.BACKEND_DIR}}"
+    cmds:
+      - npm run lint
+    ignore_error: true
+
+  frontend:lint:
+    desc: Run frontend linting
+    dir: "{{.FRONTEND_DIR}}"
+    cmds:
+      - npm run lint
+    ignore_error: true
+
+  # ====================
+  # Docker Management
+  # ====================
+  docker:up:
+    desc: Start all services with Docker Compose
+    cmds:
+      - docker-compose -f {{.COMPOSE_FILE}} up -d
+      - echo "🐳 All services started!"
+      - echo "📱 Frontend - http://localhost:3000"
+      - echo "🔗 Backend API - http://localhost:3001"
+      - echo "🗄️  Database - localhost:5432"
+
+  docker:down:
+    desc: Stop all Docker services
+    cmds:
+      - docker-compose -f {{.COMPOSE_FILE}} down
+
+  docker:restart:
+    desc: Restart all Docker services
+    cmds:
+      - task: docker:down
+      - task: docker:up
+
+  docker:build:
+    desc: Build all Docker images
+    cmds:
+      - docker-compose -f {{.COMPOSE_FILE}} build
+
+  docker:rebuild:
+    desc: Rebuild and restart all services
+    cmds:
+      - docker-compose -f {{.COMPOSE_FILE}} down
+      - docker-compose -f {{.COMPOSE_FILE}} build --no-cache
+      - docker-compose -f {{.COMPOSE_FILE}} up -d
+
+  docker:logs:
+    desc: View logs from all services
+    cmds:
+      - docker-compose -f {{.COMPOSE_FILE}} logs -f
+
+  docker:logs:backend:
+    desc: View backend logs only
+    cmds:
+      - docker-compose -f {{.COMPOSE_FILE}} logs -f backend
+
+  docker:logs:frontend:
+    desc: View frontend logs only
+    cmds:
+      - docker-compose -f {{.COMPOSE_FILE}} logs -f frontend
+
+  docker:logs:db:
+    desc: View database logs only
+    cmds:
+      - docker-compose -f {{.COMPOSE_FILE}} logs -f postgres
+
+  docker:clean:
+    desc: Clean up Docker resources (containers, images, volumes)
+    cmds:
+      - docker-compose -f {{.COMPOSE_FILE}} down -v --rmi all
+      - docker system prune -f
+
+  docker:db-only:
+    desc: Start only PostgreSQL database
+    cmds:
+      - docker-compose -f {{.COMPOSE_FILE}} up -d postgres
+      - echo "🗄️  PostgreSQL started on localhost:5432"
+
+  # ====================
+  # Database Management
+  # ====================
+  db:start:
+    desc: Start PostgreSQL database
+    cmds:
+      - task: docker:db-only
+
+  db:stop:
+    desc: Stop PostgreSQL database
+    cmds:
+      - docker-compose -f {{.COMPOSE_FILE}} stop postgres
+
+  db:connect:
+    desc: Connect to PostgreSQL database
+    cmds:
+      - echo "🔗 Connecting to PostgreSQL..."
+      - echo "Password is postgres"
+      - |
+        docker exec -it $(docker-compose -f {{.COMPOSE_FILE}} ps -q postgres) \
+          psql -U postgres -d cheeseplatform
+
+  db:logs:
+    desc: View database logs
+    cmds:
+      - task: docker:logs:db
+
+  db:reset:
+    desc: Reset database (stop, remove volume, restart)
+    cmds:
+      - docker-compose -f {{.COMPOSE_FILE}} stop postgres
+      - docker-compose -f {{.COMPOSE_FILE}} rm -f postgres
+      - docker volume rm cheeseplatform_postgres_data || true
+      - docker-compose -f {{.COMPOSE_FILE}} up -d postgres
+      - echo "🔄 Database reset complete"
+
+  # ====================
+  # Production
+  # ====================
+  prod:start:
+    desc: Start all services in production mode
+    cmds:
+      - task: build:all
+      - docker-compose -f {{.COMPOSE_FILE}} up -d
+      - echo "🚀 Production services started!"
+
+  prod:stop:
+    desc: Stop production services
+    cmds:
+      - task: docker:down
+
+  # ====================
+  # Health Checks & Status
+  # ====================
+  status:
+    desc: Check status of all services
+    cmds:
+      - echo "🔍 Service Status:"
+      - docker-compose -f {{.COMPOSE_FILE}} ps
+
+  health:
+    desc: Check health of running services
+    cmds:
+      - echo "🏥 Health Check"
+      - echo "Frontend (http://localhost:3000)"
+      - curl -f http://localhost:3000 > /dev/null 2>&1 && echo "  ✅ OK" || echo "  ❌ Down"
+      - echo "Backend API (http://localhost:3001)"
+      - curl -f http://localhost:3001/health > /dev/null 2>&1 && echo "  ✅ OK" || echo "  ❌ Down"
+      - echo "Database (localhost:5432)"
+      - docker exec $(docker-compose -f {{.COMPOSE_FILE}} ps -q postgres) pg_isready -U postgres > /dev/null 2>&1 && echo "  ✅ OK" || echo "  ❌ Down"
+
+  # ====================
+  # Utilities
+  # ====================
+  clean:
+    desc: Clean build artifacts and dependencies
+    cmds:
+      - rm -rf {{.BACKEND_DIR}}/node_modules
+      - rm -rf {{.BACKEND_DIR}}/dist
+      - rm -rf {{.FRONTEND_DIR}}/node_modules
+      - rm -rf {{.FRONTEND_DIR}}/dist
+      - echo "🧹 Cleaned all build artifacts and dependencies"
+
+  fresh:
+    desc: Fresh start - clean everything and reinstall
+    cmds:
+      - task: clean
+      - task: docker:clean
+      - task: install
+      - echo "✨ Fresh environment ready!"
+
+  backup:db:
+    desc: Create database backup
+    cmds:
+      - mkdir -p backups
+      - |
+        docker exec $(docker-compose -f {{.COMPOSE_FILE}} ps -q postgres) \
+          pg_dump -U postgres cheeseplatform > backups/backup_$(date +%Y%m%d_%H%M%S).sql
+      - echo "💾 Database backup created in backups/ directory"
+
+  restore:db:
+    desc: Restore database from backup file (usage - task restore:db BACKUP_FILE=backups/backup.sql)
+    cmds:
+      - |
+        docker exec -i $(docker-compose -f {{.COMPOSE_FILE}} ps -q postgres) \
+          psql -U postgres cheeseplatform < {{.BACKUP_FILE}}
+      - echo "📥 Database restored from {{.BACKUP_FILE}}"
+
+  # ====================
+  # Development Shortcuts
+  # ====================
+  be:
+    desc: Shortcut for backend development
+    cmds:
+      - task: backend:dev
+
+  fe:
+    desc: Shortcut for frontend development
+    cmds:
+      - task: frontend:dev
+
+  up:
+    desc: Shortcut for docker:up
+    cmds:
+      - task: docker:up
+
+  down:
+    desc: Shortcut for docker:down
+    cmds:
+      - task: docker:down
+
+  logs:
+    desc: Shortcut for docker:logs
+    cmds:
+      - task: docker:logs
+
+  # ====================
+  # API Testing
+  # ====================
+  api:test:
+    desc: Test API endpoints (requires curl)
+    cmds:
+      - echo "🧪 Testing API endpoints..."
+      - echo "Health check"
+      - curl -s http://localhost:3001/health | jq . || echo "Backend not running"
+      - echo ""
+      - echo "💡 For full API testing, see docs/API.md"
+
+  # ====================
+  # Documentation
+  # ====================
+  docs:
+    desc: Open API documentation
+    cmds:
+      - echo "📚 API Documentation"
+      - cat {{.DOCS_DIR}}/API.md
+
+  info:
+    desc: Show project information
+    cmds:
+      - echo "🧀 Cheese Platform"
+      - echo "=================="
+      - echo "Frontend - React + TypeScript + Vite"
+      - echo "Backend - Node.js + TypeScript + Express"
+      - echo "Database - PostgreSQL"
+      - echo "Tools - Docker, Socket.IO"
+      - echo ""
+      - echo "URLs"
+      - echo "  Frontend - http://localhost:3000"
+      - echo "  Backend - http://localhost:3001"
+      - echo "  Database - localhost:5432"
+      - echo ""
+      - echo "Run 'task help' for more commands"
